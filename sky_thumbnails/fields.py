@@ -210,8 +210,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         if self._verify_thumbnail_requirements():
             for identifier, proc_opts in self.field.thumbnails.items():
                 t = self.thumbnail_class(self.instance, self.field, self, self.name, identifier, proc_opts)
-                if self.storage.exists(t.name):
-                    setattr(self, identifier, t)
+                setattr(self, identifier, t)
     
     def _verify_thumbnail_requirements(self):
         """This function performs a series of checks to ensure flawless
