@@ -21,9 +21,9 @@
 import os
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 try:
     from PIL import Image, ImageFilter
 except ImportError:
@@ -84,8 +84,8 @@ class ImageProcessor:
         elif not isinstance(proc_opts, dict):
             raise ThumbnailOptionError('A dictionary object is required')
         else:
-            for option in proc_opts.keys():
-                if option not in self.DEFAULT_OPTIONS.keys():
+            for option in list(proc_opts.keys()):
+                if option not in list(self.DEFAULT_OPTIONS.keys()):
                     raise ThumbnailOptionError('Invalid thumbnail option `%s`' % option)
             self.proc_opts = self.DEFAULT_OPTIONS.copy()
             self.proc_opts.update(proc_opts)

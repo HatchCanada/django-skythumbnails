@@ -74,7 +74,7 @@ class BaseThumbnailFieldFile(ImageFieldFile):
         super(BaseThumbnailFieldFile, self).__init__(instance, field, name)
 
     def get_identifier(self, identifier):
-        if not isinstance(identifier, str) and not isinstance(identifier, unicode):
+        if not isinstance(identifier, str) and not isinstance(identifier, str):
             raise ThumbnailOptionError('The identifier must be a string')
         elif identifier == '':
             raise ThumbnailOptionError('An identifier (key) for the thumbnails dictionary was blank')
@@ -208,7 +208,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         
         # Set thumbnail objects as attributes.
         if self._verify_thumbnail_requirements():
-            for identifier, proc_opts in self.field.thumbnails.items():
+            for identifier, proc_opts in list(self.field.thumbnails.items()):
                 t = self.thumbnail_class(self.instance, self.field, self, self.name, identifier, proc_opts)
                 setattr(self, identifier, t)
     
@@ -255,10 +255,10 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
 
         """
 
-        if not self.__dict__.has_key(attribute):
+        if attribute not in self.__dict__:
             # Proceed to thumbnail generation only if a *thumbnail* attribute
             # is requested
-            if self.__dict__.has_key('field') and self.field.thumbnails.has_key(attribute):
+            if 'field' in self.__dict__ and attribute in self.field.thumbnails:
                 # Generate thumbnail
                 self._require_file()    # TODO: document this
                 if self._verify_thumbnail_requirements():
@@ -306,7 +306,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
 
         # Generate all thumbnails
         if self._verify_thumbnail_requirements():
-            for identifier, proc_opts in self.field.thumbnails.items():
+            for identifier, proc_opts in list(self.field.thumbnails.items()):
                 t = self.thumbnail_class(self.instance, self.field, self, self.name, identifier, proc_opts)
                 t.save(content)
 
@@ -318,7 +318,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         """
         # First try to delete the thumbnails
         if self._verify_thumbnail_requirements():
-            for identifier, proc_opts in self.field.thumbnails.items():
+            for identifier, proc_opts in list(self.field.thumbnails.items()):
                 t = self.thumbnail_class(self.instance, self.field, self, self.name, identifier, proc_opts)
                 t.delete()
 
