@@ -81,10 +81,10 @@ def crop_resize(image, size, exact_size=False):
     size = list(size)
 
     try:
-        for orientation in ExifTags.TAGS.keys():
+        for orientation in list(ExifTags.TAGS.keys()):
             if ExifTags.TAGS[orientation] == 'Orientation':
                 break
-        exif = dict(image._getexif().items())
+        exif = dict(list(image._getexif().items()))
 
         if exif[orientation] == 3:
             image = image.rotate(180, expand=True)
