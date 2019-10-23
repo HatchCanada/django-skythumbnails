@@ -21,9 +21,9 @@
 import os
 
 try:
-    from io import StringIO
+    from io import BytesIO
 except ImportError:
-    from io import StringIO
+    from io import BytesIO
 try:
     from PIL import Image, ImageFilter
 except ImportError:
@@ -39,8 +39,6 @@ from sky_thumbnails import settings
 from sky_thumbnails.exceptions import ThumbnailOptionError
 from sky_thumbnails.exceptions import ThumbnailWorksError
 from sky_thumbnails.exceptions import ImageSizeError
-
-
 
 
 class ImageProcessor:
@@ -61,7 +59,7 @@ class ImageProcessor:
         'detail': False,
         'upscale': False,
         'format': settings.THUMBNAILS_FORMAT,
-        }
+    }
 
     def setup_image_processing_options(self, proc_opts):
         """Sets the image processing options as an attribute of the
@@ -77,7 +75,7 @@ class ImageProcessor:
 
         """
         if proc_opts is None:
-            if self.identifier is not None: # self is a thumbnail
+            if self.identifier is not None:  # self is a thumbnail
                 raise ThumbnailOptionError('It is not possible to set the \
                     image processing options to None on thumbnails')
             self.proc_opts = None
@@ -143,7 +141,7 @@ class ImageProcessor:
             ext = self.get_image_extension()
             if ext is None:
                 ext = default_ext
-        if self.identifier is None: # For source images
+        if self.identifier is None:  # For source images
             image_filename = '%s%s' % (base_filename, ext)
             return os.path.join(root_dir, image_filename)
         else:   # For thumbnails
@@ -199,7 +197,7 @@ class ImageProcessor:
 
         # Save image data
         format = self.proc_opts['format']
-        buffer = StringIO()
+        buffer = BytesIO()
 
         if format == 'JPEG':
             im.save(buffer, format, quality=settings.THUMBNAILS_QUALITY)
@@ -220,4 +218,3 @@ class ImageProcessor:
 
     def _detail(self, im):
         return im.filter(ImageFilter.DETAIL)
-
