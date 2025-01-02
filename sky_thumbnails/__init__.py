@@ -19,7 +19,7 @@
 #  Copyright 2010 George Notaras <gnot [at] g-loaded.eu>
 
 
-VERSION = (1, 0, 1)
+VERSION = (1, 1, 0)
 
 
 def get_version():
