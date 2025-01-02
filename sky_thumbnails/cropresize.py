@@ -123,7 +123,14 @@ def crop_resize(image, size, exact_size=False):
             yoffset = int(0.5*(image.size[1] - image.size[0]/size_ar))
             image = image.crop((0, yoffset, image.size[0], image.size[1] - yoffset))
 
-    return image.resize(size, Image.ANTIALIAS)
+    try:
+        # For Pillow 9.1+
+        resampling = Image.Resampling.LANCZOS
+    except AttributeError:
+        # For Pillow 9.0.1 and earlier
+        resampling = Image.ANTIALIAS
+
+    return image.resize(size, resampling)
 
 def main():
     from optparse import OptionParser
