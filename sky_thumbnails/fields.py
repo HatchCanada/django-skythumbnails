@@ -269,7 +269,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
                 return super(BaseEnhancedImageFieldFile, self).__getattr__(attribute)
         return self.__dict__.get(attribute)
 
-    def save(self, name, content, save=True):
+    def save(self, name, content, save=True, add_timestamp=False):
         """Saves the source image and generates thumbnails.
 
         ``name``
@@ -294,7 +294,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
             content = self.process_image(content)
             # The following sets the correct filename extension according
             # to the image format.
-            name = self.generate_image_name(name=name)
+            name = self.generate_image_name(name=name, add_timestamp=add_timestamp)
 
         # Save the source image on the storage.
         # This also re-sets ``self.name``

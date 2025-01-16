@@ -18,6 +18,7 @@
 #
 #  Copyright 2010 George Notaras <gnot [at] g-loaded.eu>
 
+from datetime import datetime
 import os
 
 try:
@@ -102,7 +103,7 @@ class ImageProcessor:
             return '.jpg'
         return '.%s' % ext
 
-    def generate_image_name(self, name, force_ext=None):
+    def generate_image_name(self, name, force_ext=None, add_timestamp=False):
         """Generates a path for the image file taking the format into account.
 
         This method should be used by both the source image and thumbnails
@@ -135,6 +136,12 @@ class ImageProcessor:
         root_dir = os.path.dirname(name)  # images
         filename = os.path.basename(name)    # photo.jpg
         base_filename, default_ext = os.path.splitext(filename)
+
+        # Add timestamp if requested
+        if add_timestamp:
+            timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
+            base_filename = f"{base_filename}_{timestamp}"
+
         if force_ext is not None:
             ext = force_ext
         else:
