@@ -269,7 +269,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
                 return super(BaseEnhancedImageFieldFile, self).__getattr__(attribute)
         return self.__dict__.get(attribute)
 
-    def save(self, name, content, save=True, add_timestamp=False):
+    def save(self, name, content, save=True):
         """Saves the source image and generates thumbnails.
 
         ``name``
@@ -294,7 +294,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
             content = self.process_image(content)
             # The following sets the correct filename extension according
             # to the image format.
-            name = self.generate_image_name(name=name, add_timestamp=add_timestamp)
+            name = self.generate_image_name(name=name, add_timestamp=self.add_timestamp)
 
         # Save the source image on the storage.
         # This also re-sets ``self.name``
@@ -448,10 +448,11 @@ class EnhancedImageField(ImageField):
     attr_class = EnhancedImageFieldFile
 
 
-    def __init__(self, process_source=None, thumbnails={}, crops={}, **kwargs):
+    def __init__(self, process_source=None, thumbnails={}, crops={}, add_timestamp=False, **kwargs):
         self.process_source = process_source
         self.thumbnails = thumbnails
         self.crops = crops
+        self.add_timestamp = add_timestamp
         super(EnhancedImageField, self).__init__(**kwargs)
 
     # this isn't working, I think it is getting overwritten by
