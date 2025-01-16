@@ -136,22 +136,28 @@ class ImageProcessor:
         root_dir = os.path.dirname(name)  # images
         filename = os.path.basename(name)    # photo.jpg
         base_filename, default_ext = os.path.splitext(filename)
-
+        print(f"BUTTS = Base filename on 139 is {base_filename}")
         # Adding timestamp to ensure uniqueness of filename
         timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
         base_filename = f"{base_filename}_{timestamp}"
-
+        print(f"Base filename on 143 is {base_filename}")
         if force_ext is not None:
             ext = force_ext
+            print(f"Base filename on 146 is {base_filename}")
+
         else:
             ext = self.get_image_extension()
             if ext is None:
                 ext = default_ext
         if self.identifier is None:  # For source images
             image_filename = '%s%s' % (base_filename, ext)
+            print(f"Image filename on 154 is {image_filename}")
+
             return os.path.join(root_dir, image_filename)
         else:   # For thumbnails
             image_filename = '%s.%s%s' % (base_filename, self.identifier, ext)
+            print(f"Image filename on 159 is {image_filename}")
+
             if settings.THUMBNAILS_DIRNAME:
                 return os.path.join(root_dir, settings.THUMBNAILS_DIRNAME, image_filename)
             return os.path.join(root_dir, image_filename)
