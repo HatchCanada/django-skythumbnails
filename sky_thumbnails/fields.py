@@ -288,13 +288,16 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         are generated as soon as the source image is saved.
 
         """
+        print("DOES ANYTHING ACTUALLY PRINT HERE???")
         # Resize the source image if image processing options have been set
         if self.proc_opts is not None:
             content = self.process_image(content)
             # The following sets the correct filename extension according
             # to the image format.
             name = self.generate_image_name(name=name)
+            print(f"Oooh na na what's my name? {name}")
 
+            name = name + "T2294982_000"
         # Save the source image on the storage.
         # This also re-sets ``self.name``
         super(BaseEnhancedImageFieldFile, self).save(name, content, save)
