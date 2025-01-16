@@ -18,7 +18,7 @@
 #
 #  Copyright 2010 George Notaras <gnot [at] g-loaded.eu>
 
-# from datetime import datetime
+from datetime import datetime
 import os
 
 try:
@@ -55,11 +55,11 @@ class ImageProcessor:
     """
 
     DEFAULT_OPTIONS = {
-        "size": None,
-        "sharpen": False,
-        "detail": False,
-        "upscale": False,
-        "format": settings.THUMBNAILS_FORMAT,
+        'size': None,
+        'sharpen': False,
+        'detail': False,
+        'upscale': False,
+        'format': settings.THUMBNAILS_FORMAT,
     }
 
     def setup_image_processing_options(self, proc_opts):
@@ -77,17 +77,15 @@ class ImageProcessor:
         """
         if proc_opts is None:
             if self.identifier is not None:  # self is a thumbnail
-                raise ThumbnailOptionError(
-                    "It is not possible to set the \
-                    image processing options to None on thumbnails"
-                )
+                raise ThumbnailOptionError('It is not possible to set the \
+                    image processing options to None on thumbnails')
             self.proc_opts = None
         elif not isinstance(proc_opts, dict):
-            raise ThumbnailOptionError("A dictionary object is required")
+            raise ThumbnailOptionError('A dictionary object is required')
         else:
             for option in list(proc_opts.keys()):
                 if option not in list(self.DEFAULT_OPTIONS.keys()):
-                    raise ThumbnailOptionError("Invalid thumbnail option `%s`" % option)
+                    raise ThumbnailOptionError('Invalid thumbnail option `%s`' % option)
             self.proc_opts = self.DEFAULT_OPTIONS.copy()
             self.proc_opts.update(proc_opts)
 
@@ -100,10 +98,10 @@ class ImageProcessor:
         """
         if not isinstance(self.proc_opts, dict):
             return
-        ext = self.proc_opts["format"].lower()
-        if ext == "jpeg":
-            return ".jpg"
-        return ".%s" % ext
+        ext = self.proc_opts['format'].lower()
+        if ext == 'jpeg':
+            return '.jpg'
+        return '.%s' % ext
 
     def generate_image_name(self, name, force_ext=None):
         """Generates a path for the image file taking the format into account.
@@ -136,8 +134,13 @@ class ImageProcessor:
         if not name:
             raise ThumbnailWorksError('The provided name is not usable: "%s"')
         root_dir = os.path.dirname(name)  # images
-        filename = os.path.basename(name)  # photo.jpg
+        filename = os.path.basename(name)    # photo.jpg
         base_filename, default_ext = os.path.splitext(filename)
+
+        # Adding timestamp to ensure uniqueness of filename
+        timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
+        base_filename = f"{base_filename}_{timestamp}"
+
         if force_ext is not None:
             ext = force_ext
         else:
@@ -145,14 +148,12 @@ class ImageProcessor:
             if ext is None:
                 ext = default_ext
         if self.identifier is None:  # For source images
-            image_filename = "%s%s" % (base_filename, ext)
+            image_filename = '%s%s' % (base_filename, ext)
             return os.path.join(root_dir, image_filename)
-        else:  # For thumbnails
-            image_filename = "%s.%s%s" % (base_filename, self.identifier, ext)
+        else:   # For thumbnails
+            image_filename = '%s.%s%s' % (base_filename, self.identifier, ext)
             if settings.THUMBNAILS_DIRNAME:
-                return os.path.join(
-                    root_dir, settings.THUMBNAILS_DIRNAME, image_filename
-                )
+                return os.path.join(root_dir, settings.THUMBNAILS_DIRNAME, image_filename)
             return os.path.join(root_dir, image_filename)
 
     def get_image_content(self):
@@ -160,7 +161,7 @@ class ImageProcessor:
         try:
             content = ContentFile(self.storage.open(self.name).read())
         except IOError:
-            raise Exception("Could not access image data: %s" % self.name)
+            raise Exception('Could not access image data: %s' % self.name)
         else:
             return content
 
@@ -176,35 +177,35 @@ class ImageProcessor:
         im = Image.open(content)
 
         # Convert to RGB format
-        if im.mode not in ("L", "RGB", "RGBA"):
-            im = im.convert("RGB")
+        if im.mode not in ('L', 'RGB', 'RGBA'):
+            im = im.convert('RGB')
 
         # Process
-        size = self.proc_opts["size"]
-        upscale = self.proc_opts["upscale"]
+        size = self.proc_opts['size']
+        upscale = self.proc_opts['upscale']
         if size is not None:
             try:
                 size_x = int(size[0])
                 size_y = int(size[1])
             except ValueError:
-                raise ImageSizeError("size's WIDTH and HEIGHT must be integers")
+                raise ImageSizeError('size\'s WIDTH and HEIGHT must be integers')
             except IndexError:
-                raise ImageSizeError("size's WIDTH and HEIGHT must be integers")
+                raise ImageSizeError('size\'s WIDTH and HEIGHT must be integers')
             im = self._resize(im, size, upscale)
 
-        sharpen = self.proc_opts["sharpen"]
+        sharpen = self.proc_opts['sharpen']
         if sharpen:
             im = self._sharpen(im)
 
-        detail = self.proc_opts["detail"]
+        detail = self.proc_opts['detail']
         if detail:
             im = self._detail(im)
 
         # Save image data
-        format = self.proc_opts["format"]
+        format = self.proc_opts['format']
         buffer = BytesIO()
 
-        if format == "JPEG":
+        if format == 'JPEG':
             im.save(buffer, format, quality=settings.THUMBNAILS_QUALITY)
         else:
             im.save(buffer, format)

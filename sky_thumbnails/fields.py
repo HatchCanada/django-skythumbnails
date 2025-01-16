@@ -269,7 +269,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
                 return super(BaseEnhancedImageFieldFile, self).__getattr__(attribute)
         return self.__dict__.get(attribute)
 
-    def save(self, name, content, save=True, add_timestamp=False):
+    def save(self, name, content, save=True):
         """Saves the source image and generates thumbnails.
 
         ``name``
@@ -288,7 +288,6 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         are generated as soon as the source image is saved.
 
         """
-        print(f"Should I add a timestamp? {add_timestamp}")
         # Resize the source image if image processing options have been set
         if self.proc_opts is not None:
             content = self.process_image(content)
