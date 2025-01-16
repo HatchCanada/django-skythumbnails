@@ -19,13 +19,13 @@
 #  Copyright 2010 George Notaras <gnot [at] g-loaded.eu>
 
 
-# from django.db.models.fields.files import ImageField, ImageFieldFile
+from django.db.models.fields.files import ImageField, ImageFieldFile
 
-# from sky_thumbnails.exceptions import ThumbnailOptionError
-# from sky_thumbnails.exceptions import ThumbnailWorksError
-# from sky_thumbnails import settings
-# from sky_thumbnails.images import ImageProcessor
-# from sky_thumbnails.widgets import AdminImageWidget
+from sky_thumbnails.exceptions import ThumbnailOptionError
+from sky_thumbnails.exceptions import ThumbnailWorksError
+from sky_thumbnails import settings
+from sky_thumbnails.images import ImageProcessor
+from sky_thumbnails.widgets import AdminImageWidget
 
 
 class BaseThumbnailFieldFile(ImageFieldFile):
