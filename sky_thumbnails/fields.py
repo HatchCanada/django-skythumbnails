@@ -294,9 +294,11 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         are generated as soon as the source image is saved.
 
         """
-
+        print(f"Current value of self.name: {self.name}")
         if not self.name:  # Only modify the name if the file is being created
+            print(f"Adding a new name")
             name = self.add_timestamp_to_filename(name)
+            print(f"New name is {name}")
 
         # Resize the source image if image processing options have been set
         if self.proc_opts is not None:
