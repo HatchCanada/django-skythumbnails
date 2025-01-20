@@ -18,6 +18,7 @@
 #
 #  Copyright 2010 George Notaras <gnot [at] g-loaded.eu>
 
+from datetime import datetime
 
 from django.db.models.fields.files import ImageField, ImageFieldFile
 
@@ -300,9 +301,9 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
             content = self.process_image(content)
             # The following sets the correct filename extension according
             # to the image format.
-            name = self.generate_image_name(name=name)
+            timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
+            name = self.generate_image_name(name=f"{name} {timestamp}")
 
-            name = name + "FAKE_TIMESTAMP"
         # Save the source image on the storage.
         # This also re-sets ``self.name``
         super(BaseEnhancedImageFieldFile, self).save(name, content, save)
