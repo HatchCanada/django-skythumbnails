@@ -296,15 +296,17 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         are generated as soon as the source image is saved.
 
         """
-        print("THIS IS BEFORE THE PROC_OPTS CHECK IS CALLED")
         # Resize the source image if image processing options have been set
         if self.proc_opts is not None:
             content = self.process_image(content)
             # The following sets the correct filename extension according
             # to the image format.
-            timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
-            name = self.generate_image_name(name=f"{name} {timestamp}")
-            print("THIS IS IN THE PROC_OPTS")
+            name = self.generate_image_name(name=name)
+
+        print(f"THIS IS THE NAME BEFORE ADDING TIMESTAMP: {name}")
+
+        timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
+        name = f"{name} {timestamp}"
 
         print(f"THIS IS THE NAME BEFORE SUPER.SAVE IS CALLED: {name}")
         # Save the source image on the storage.
