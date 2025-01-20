@@ -18,8 +18,6 @@
 #
 #  Copyright 2010 George Notaras <gnot [at] g-loaded.eu>
 
-from datetime import datetime
-
 from django.db.models.fields.files import ImageField, ImageFieldFile
 
 from sky_thumbnails.exceptions import ThumbnailOptionError
@@ -207,11 +205,6 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         # Set the image processing options for this image (source image)
         self.setup_image_processing_options(field.process_source)
 
-        print(f"THIS IS THE NAME IN INIT BEFORE ADDING TIMESTAMP: {name}")
-
-        name = self.add_timestamp_to_filename(name)
-
-        print(f"THIS IS THE NAME IN INIT BEFORE SUPER.SAVE IS CALLED: {name}")
         # Among others, also sets ``self.name``
         super(BaseEnhancedImageFieldFile, self).__init__(instance, field, name)
 
@@ -301,6 +294,10 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         are generated as soon as the source image is saved.
 
         """
+
+        if not self.name:  # Only modify the name if the file is being created
+            name = self.add_timestamp_to_filename(name)
+
         # Resize the source image if image processing options have been set
         if self.proc_opts is not None:
             content = self.process_image(content)

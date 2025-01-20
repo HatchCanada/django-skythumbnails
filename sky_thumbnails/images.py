@@ -158,7 +158,7 @@ class ImageProcessor:
             return os.path.join(root_dir, image_filename)
 
     def add_timestamp_to_filename(self, name):
-        print(f"ADD TIMESTAMP METHOD HAS BEEN CALLED.")
+        print(f"This is how the name looks when the add timestamp is called: {name}")
         timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
         return f"{name} {timestamp}"
 
