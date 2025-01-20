@@ -207,6 +207,12 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         # Set the image processing options for this image (source image)
         self.setup_image_processing_options(field.process_source)
 
+        print(f"THIS IS THE NAME IN INIT BEFORE ADDING TIMESTAMP: {name}")
+
+        timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
+        name = f"{name} {timestamp}"
+
+        print(f"THIS IS THE NAME IN INIT BEFORE SUPER.SAVE IS CALLED: {name}")
         # Among others, also sets ``self.name``
         super(BaseEnhancedImageFieldFile, self).__init__(instance, field, name)
 
@@ -303,12 +309,6 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
             # to the image format.
             name = self.generate_image_name(name=name)
 
-        print(f"THIS IS THE NAME BEFORE ADDING TIMESTAMP: {name}")
-
-        timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
-        name = f"{name} {timestamp}"
-
-        print(f"THIS IS THE NAME BEFORE SUPER.SAVE IS CALLED: {name}")
         # Save the source image on the storage.
         # This also re-sets ``self.name``
         super(BaseEnhancedImageFieldFile, self).save(name, content, save)
