@@ -75,10 +75,12 @@ class BaseThumbnailFieldFile(ImageFieldFile):
 
     def get_identifier(self, identifier):
         if not isinstance(identifier, str):
-            raise ThumbnailOptionError('The identifier must be a string')
-        elif identifier == '':
-            raise ThumbnailOptionError('An identifier (key) for the thumbnails dictionary was blank')
-        return identifier.replace(' ', '_')
+            raise ThumbnailOptionError("The identifier must be a string")
+        elif identifier == "":
+            raise ThumbnailOptionError(
+                "An identifier (key) for the thumbnails dictionary was blank"
+            )
+        return identifier.replace(" ", "_")
 
     def save(self, source_content=None):
         """Saves the thumbnail file.
@@ -105,7 +107,7 @@ class BaseThumbnailFieldFile(ImageFieldFile):
 
             self._committed = True
         except:
-            # The image probably does not exist on disk, so the 
+            # The image probably does not exist on disk, so the
             # get_image_content and process image will fail.
             pass
 
@@ -118,7 +120,7 @@ class BaseThumbnailFieldFile(ImageFieldFile):
         """
         # Only close the file if it's already open, which we know by the
         # presence of self._file
-        if hasattr(self, '_file'):
+        if hasattr(self, "_file"):
             self.close()
             del self.file
 
@@ -131,11 +133,11 @@ class BaseThumbnailFieldFile(ImageFieldFile):
             delattr(self.source, self.identifier)
 
         # Clear the image dimensions cache
-        if hasattr(self, '_dimensions_cache'):
+        if hasattr(self, "_dimensions_cache"):
             del self._dimensions_cache
 
         # Delete the filesize cache
-        if hasattr(self, '_size'):
+        if hasattr(self, "_size"):
             del self._size
 
         self._committed = False
@@ -163,6 +165,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
       EnhancedImageField.
 
     """
+
     thumbnail_class = ThumbnailFieldFile
 
     def __init__(self, instance, field, name):
@@ -196,32 +199,34 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         If the thumbnail files are not found on the storage at this time, they
         will be generated the first time they are accessed regardless of the
         THUMBNAILS_DELAYED_GENERATION ``setting``.
-        
+
         """
         # Set the identifier to None. Only thumbnails have an identifier attribute
         self.identifier = None
         # Set the image processing options for this image (source image)
         self.setup_image_processing_options(field.process_source)
-        
+
         # Among others, also sets ``self.name``
         super(BaseEnhancedImageFieldFile, self).__init__(instance, field, name)
-        
+
         # Set thumbnail objects as attributes.
         if self._verify_thumbnail_requirements():
             for identifier, proc_opts in list(self.field.thumbnails.items()):
-                t = self.thumbnail_class(self.instance, self.field, self, self.name, identifier, proc_opts)
+                t = self.thumbnail_class(
+                    self.instance, self.field, self, self.name, identifier, proc_opts
+                )
                 setattr(self, identifier, t)
-    
+
     def _verify_thumbnail_requirements(self):
         """This function performs a series of checks to ensure flawless
         thumbnail access, generation and management. It is a safety mechanism.
-        
+
         Before using instanciating ``ThumbnailFieldFile`` you should run
         this check. For example:
-        
+
             if self._verify_thumbnail_requirements():
                 t = ThumbnailFieldFile(...)
-        
+
         """
         if not self._committed:
             # TODO: documentation for this check
@@ -258,12 +263,14 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         if attribute not in self.__dict__:
             # Proceed to thumbnail generation only if a *thumbnail* attribute
             # is requested
-            if 'field' in self.__dict__ and attribute in self.field.thumbnails:
+            if "field" in self.__dict__ and attribute in self.field.thumbnails:
                 # Generate thumbnail
-                self._require_file()    # TODO: document this
+                self._require_file()  # TODO: document this
                 if self._verify_thumbnail_requirements():
                     proc_opts = self.field.thumbnails[attribute]
-                    t = self.thumbnail_class(self.instance, self.field, self, self.name, attribute, proc_opts)
+                    t = self.thumbnail_class(
+                        self.instance, self.field, self, self.name, attribute, proc_opts
+                    )
                     t.save()
             else:
                 return super(BaseEnhancedImageFieldFile, self).__getattr__(attribute)
@@ -288,16 +295,14 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         are generated as soon as the source image is saved.
 
         """
-        print("DOES ANYTHING ACTUALLY PRINT HERE???")
         # Resize the source image if image processing options have been set
         if self.proc_opts is not None:
             content = self.process_image(content)
             # The following sets the correct filename extension according
             # to the image format.
             name = self.generate_image_name(name=name)
-            print(f"Oooh na na what's my name? {name}")
 
-            name = name + "T2294982_000"
+            name = name + "FAKE_TIMESTAMP"
         # Save the source image on the storage.
         # This also re-sets ``self.name``
         super(BaseEnhancedImageFieldFile, self).save(name, content, save)
@@ -309,7 +314,9 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         # Generate all thumbnails
         if self._verify_thumbnail_requirements():
             for identifier, proc_opts in list(self.field.thumbnails.items()):
-                t = self.thumbnail_class(self.instance, self.field, self, self.name, identifier, proc_opts)
+                t = self.thumbnail_class(
+                    self.instance, self.field, self, self.name, identifier, proc_opts
+                )
                 t.save(content)
 
     def delete(self, save=True):
@@ -321,7 +328,9 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
         # First try to delete the thumbnails
         if self._verify_thumbnail_requirements():
             for identifier, proc_opts in list(self.field.thumbnails.items()):
-                t = self.thumbnail_class(self.instance, self.field, self, self.name, identifier, proc_opts)
+                t = self.thumbnail_class(
+                    self.instance, self.field, self, self.name, identifier, proc_opts
+                )
                 t.delete()
 
         # Delete the source file
@@ -384,9 +393,9 @@ class EnhancedImageField(ImageField):
     ``thumbnails``
         A dictionary of *thumbnail definitions*. The format of each thumbnail
         definition is::
-    
+
             <thumbnail_identifier> : <image_processing_options>
-        
+
         **thumbnail_identifier**
             Is a string that uniquely identifies the thumbnail. It is required
             that all thumbnails use a unique identifier. This identifier is used
@@ -396,7 +405,7 @@ class EnhancedImageField(ImageField):
             This is a dictionary of options that will be used during the thumbnail
             generation. This dictionary must be present on every thumbnail
             definition. Any of the following supported options may be used:
-            
+
             ``size``
                 A tuple which represents the size of the generated thumbnail.
             ``sharpen``
@@ -418,12 +427,12 @@ class EnhancedImageField(ImageField):
                 the ``THUMBNAILS_FORMAT`` setting will be used. In case the
                 format is set to ``JPEG``, the value of the ``THUMBNAILS_QUALITY``
                 is used as the quality when the image is saved.
-    
+
     The following code snippet illustrates how to use the ``EnhancedImageField``::
 
         from django.db import models
         from sky_thumbnails.fields import EnhancedImageField
-        
+
         class MyModel(models.Model):
             photo = EnhancedImageField(
                 verbose_name='Icon for the Services index page',
@@ -434,8 +443,8 @@ class EnhancedImageField(ImageField):
                 }
             )
 
-    The following code snippet illustrates how to print an ``EnhancedImageField`` in a 
-    Jinja2 template. Note, we are checking to make sure the image exists before 
+    The following code snippet illustrates how to print an ``EnhancedImageField`` in a
+    Jinja2 template. Note, we are checking to make sure the image exists before
     calling the url property. The url property appends the STATIC_URL to the path
     of the image::
 
@@ -447,8 +456,8 @@ class EnhancedImageField(ImageField):
         {% endif %}
 
     """
-    attr_class = EnhancedImageFieldFile
 
+    attr_class = EnhancedImageFieldFile
 
     def __init__(self, process_source=None, thumbnails={}, crops={}, **kwargs):
         self.process_source = process_source
@@ -461,15 +470,15 @@ class EnhancedImageField(ImageField):
     def formfield(self, **kwargs):
         # This is a fairly standard way to set up some defaults
         # while letting the caller override them.
-        defaults = {'widget': AdminImageWidget}
+        defaults = {"widget": AdminImageWidget}
         defaults.update(kwargs)
         original_formfield = super(EnhancedImageField, self).formfield(**defaults)
         return original_formfield
 
-
     def south_field_triple(self):
         # Return a suitable description of this field for South.
         from south.modelsinspector import introspector
-        field_class = 'django.db.models.fields.files.ImageField'
+
+        field_class = "django.db.models.fields.files.ImageField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
