@@ -19,6 +19,7 @@
 #  Copyright 2010 George Notaras <gnot [at] g-loaded.eu>
 
 import os
+from datetime import datetime
 
 try:
     from io import BytesIO
@@ -155,6 +156,11 @@ class ImageProcessor:
                     root_dir, settings.THUMBNAILS_DIRNAME, image_filename
                 )
             return os.path.join(root_dir, image_filename)
+
+    def add_timestamp_to_filename(self, name):
+        print(f"ADD TIMESTAMP METHOD HAS BEEN CALLED.")
+        timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
+        return f"{name} {timestamp}"
 
     def get_image_content(self):
         """Returns the image data as a ContentFile."""

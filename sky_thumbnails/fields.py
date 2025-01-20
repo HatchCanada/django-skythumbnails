@@ -209,8 +209,7 @@ class BaseEnhancedImageFieldFile(ImageFieldFile):
 
         print(f"THIS IS THE NAME IN INIT BEFORE ADDING TIMESTAMP: {name}")
 
-        timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S_%f")[:-3]
-        name = f"{name} {timestamp}"
+        name = self.add_timestamp_to_filename(name)
 
         print(f"THIS IS THE NAME IN INIT BEFORE SUPER.SAVE IS CALLED: {name}")
         # Among others, also sets ``self.name``
